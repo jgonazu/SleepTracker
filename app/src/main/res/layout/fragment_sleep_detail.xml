@@ -36,7 +36,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/quality_image"
-            app:sleepQuality="@{sleepDetailViewModel.night}" />
+            app:sleepQualityString="@{sleepDetailViewModel.night}" />
 
         <TextView
             android:id="@+id/sleep_length"
