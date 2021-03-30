@@ -20,6 +20,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -59,12 +60,16 @@ class SleepTrackerFragment : Fragment() {
         // Get a reference to the ViewModel associated with this fragment.
         val sleepTrackerViewModel = ViewModelProvider(this, viewModelFactory).get(SleepTrackerViewModel::class.java)
 
+        binding.sleepTrackerViewModel = sleepTrackerViewModel
+
         binding.setLifecycleOwner(this)
 
         val manager = GridLayoutManager(activity, 4)
         binding.sleepList.layoutManager = manager
 
-        val sleepNightAdapter = SleepNightAdapter()
+        val sleepNightAdapter = SleepNightAdapter(SleepNightAdapter.SleepNightListener { nightId ->
+            sleepTrackerViewModel.onSleepNightClicked(nightId)
+        })
         binding.sleepList.adapter = sleepNightAdapter
 
         sleepTrackerViewModel.nights.observe(viewLifecycleOwner, Observer { nigths ->
@@ -91,7 +96,12 @@ class SleepTrackerFragment : Fragment() {
             }
         })
 
-        binding.sleepTrackerViewModel = sleepTrackerViewModel
+        sleepTrackerViewModel.navigateToSleepDataQuality.observe(viewLifecycleOwner, Observer { night ->
+            night?.let {
+                findNavController().navigate(SleepTrackerFragmentDirections.actionSleepTrackerFragmentToSleepDetailFragment(night))
+                sleepTrackerViewModel.onSleepNightDataNavigated()
+            }
+        })
 
         return binding.root
     }
